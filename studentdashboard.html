@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Genie - Student Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 300px;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-right: 1px solid #333;
+        }
+
+        .profile-section {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Profile Image Styles */
+        .profile-image-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #333;
+            cursor: pointer;
+        }
+
+        .profile-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-image-container:hover .profile-image-overlay {
+            opacity: 1;
+        }
+
+        .profile-image-overlay span {
+            color: white;
+            font-size: 12px;
+        }
+
+        #photoInput {
+            display: none;
+        }
+
+        .student-info {
+            margin-top: 20px;
+        }
+
+        .student-info p {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .edit-profile-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        /* Notification System Styles */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .notification {
+            background-color: #2a2a2a;
+            color: white;
+            padding: 15px 25px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .notification.info {
+            border-left: 4px solid #2196F3;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .college-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #4CAF50;
+        }
+
+        .request-form {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .checkbox-group {
+            margin: 10px 0;
+        }
+
+        .checkbox-group label {
+            display: inline;
+            margin-left: 8px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-item label {
+            margin: 0 0 0 8px;
+            display: inline;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin: 20px 0 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #444;
+            color: #4CAF50;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #2a2a2a;
+            margin: 15% auto;
+            padding: 30px;
+            width: 50%;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+        }
+
+        .undertaking {
+            background-color: #333;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add notification container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar with Student Profile -->
+        <div class="sidebar">
+            <div class="profile-section">
+                <div class="profile-image-container">
+                    <img id="profileImageDisplay" class="profile-image" src="/api/placeholder/120/120" alt="Profile Photo">
+                    <div class="profile-image-overlay" onclick="document.getElementById('photoInput').click()">
+                        <span>Change Photo</span>
+                    </div>
+                    <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoUpload(event)">
+                </div>
+                <h2 id="studentName">Student Name</h2>
+                <p id="studentId">Student ID</p>
+                <button class="edit-profile-btn" onclick="openEditProfile()">Edit Profile</button>
+            </div>
+            <div class="student-info">
+                <p>Course: <span id="studentCourse"></span></p>
+                <p>Branch: <span id="studentBranch"></span></p>
+                <p>Semester: <span id="studentSemester"></span></p>
+                <p>Registration No: <span id="studentRegNo"></span></p>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <h1 class="page-title">Request Certificate</h1>
+            <div class="request-form">
+                <h2 class="college-title">GOVERNMENT ENGINEERING COLLEGE IDUKKI</h2>
+                <p style="text-align: center; margin-bottom: 20px; color: #ccc;">APPLICATION FOR RECOMMENDATION/ATTESTATION/CERTIFICATES/RETURN OF TESTIMONIALS/REFUND OF FEES</p>
+                
+                <form id="certificateRequestForm">
+                    <h3 class="section-title">APPLICANT'S DETAILS</h3>
+                    
+                    <div class="form-group">
+                        <label for="name">1. Name of student/applicant</label>
+                        <input type="text" id="name" >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>2. Course/programme & branch</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="course">Course</label>
+                                <select id="course" >
+                                    <option value="">Select Course</option>
+                                    <option value="B.Tech">B.Tech</option>
+                                    <option value="M.Tech">M.Tech</option>
+                                </select>
+                            </div>
+                            <div class="form-col">
+                                <label for="branch">Branch</label>
+                                <select id="branch" >
+                                    <option value="">Select Branch</option>
+                                    <option value="CS">CS</option>
+                                    <option value="EE">EE</option>
+                                    <option value="EC">EC</option>
+                                    <option value="IT">IT</option>
+                                    <option value="ME">ME</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="specArea" class="form-row" style="margin-top: 10px; display: none;">
+                            <div class="form-col">
+                                <label for="specialization">Specialization (M.Tech)</label>
+                                <select id="specialization">
+                                    <option value="">Select Specialization</option>
+                                    <option value="CS-CSSE">CS – CSSE</option>
+                                    <option value="EE-PEC">EE – PEC</option>
+                                    <option value="EC-VLSIES">EC – VLSIES</option>
+                                    <option value="IT-NE">IT - NE</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>3. Details of admission to college and hostel</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="collegeAdmissionNo">College Admission No.</label>
+                                <input type="text" id="collegeAdmissionNo" >
+                            </div>
+                            <div class="form-col">
+                                <label for="collegeAdmissionDate">Admission Date</label>
+                                <input type="date" id="collegeAdmissionDate" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="margin-top: 15px;">
+                            <div class="form-col">
+                                <label for="university">University</label>
+                                <select id="university" >
+                                    <option value="">Select University</option>
+                                    <option value="MGU">MGU</option>
+                                    <option value="KTU">KTU</option>
+                                </select>
+                            </div>
+                            <div class="form-col">
+                                <label for="regNo">Registration No.</label>
+                                <input type="text" id="regNo" >
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="margin-top: 15px;">
+                            <div class="form-col">
+                                <label for="semester">Current Semester</label>
+                                <select id="semester" >
+                                    <option value="">Select Semester</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                </select>
+                            </div>
+                            <div class="form-col">
+                                <label for="hostelDetails">Hostel Name & Date of Admission</label>
+                                <input type="text" id="hostelDetails" placeholder="e.g., Men's Hostel, 01/08/2023">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="margin-top: 15px;">
+                            <div class="form-col">
+                                <label for="tcNo">TC No. & date (Only for passed-out students)</label>
+                                <input type="text" id="tcNo" placeholder="e.g., TC123456, 15/06/2023">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>4. Certification/services requested</label>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="section-title" style="font-size: 16px; margin: 10px 0;">Category A</div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="refundFees">
+                                    <label for="refundFees">Refund of fees</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-col">
+                                <div class="section-title" style="font-size: 16px; margin: 10px 0;">Category B</div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="bonafide">
+                                    <label for="bonafide">Bona fide studentship</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="courseCompletion">
+                                    <label for="courseCompletion">Course completion/studying</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="transfer">
+                                    <label for="transfer">Transfer Certificate</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="feeStructure">
+                                    <label for="feeStructure">Fee structure</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="conduct">
+                                    <label for="conduct">Conduct Certificate</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="attestation">
+                                    <label for="attestation">Attestation of certificates, documents, etc.</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="recommendation">
+                                    <label for="recommendation">Recommendation for scholarship, etc.</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="section-title" style="font-size: 16px; margin: 10px 0;">Category C</div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="attendance">
+                                    <label for="attendance">Attendance</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="progressMarks">
+                                    <label for="progressMarks">Progress/Marks</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="condonation">
+                                    <label for="condonation">Condonation of attendance shortage</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="testimonials">
+                                    <label for="testimonials">Taking back of testimonials under college custody</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="directCollection">
+                                    <label for="directCollection">Direct collection of Certificate from University</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-col">
+                                <div class="section-title" style="font-size: 16px; margin: 10px 0;">Category D</div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="hostelOccupancy">
+                                    <label for="hostelOccupancy">Hostel occupancy</label>
+                                </div>
+                                
+                                <div class="section-title" style="font-size: 16px; margin: 15px 0 10px;">Category E</div>
+                                <div class="form-group">
+                                    <label for="otherDetails">Any other (specify) or details of A, B or C</label>
+                                    <textarea id="otherDetails" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason">Reason (Attach documental proof such as notifications, call letter, etc., if any)</label>
+                        <textarea id="reason" rows="3" ></textarea>
+                    </div>
+                    
+                    <div class="undertaking">
+                        <strong>5. Applicant's Undertaking:</strong> 
+                        <p>(a) I certify that all the information given above is true.</p>
+                        <p>(b) No police/court/institute cases of law-and-order/indiscipline are pending against me.</p>
+                        <p>(c) I undertake to return the testimonials (taken from office) within 3 days from the date of receipt, keep copies for future use, and not request for the same again.</p>
+                        <p>(d) I am not in receipt of any other scholarship/stipend/financial aid, shall retain only one scholarship/stipend, and surrender all others, if any.</p>
+                        <p>(e) I agree to legal and punitive actions against me, if I enjoy more than one scholarship/stipend at a time.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>6. Contact address & signature of applicant</label>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <label for="contactAddress">Contact Address</label>
+                                <textarea id="contactAddress" rows="3" ></textarea>
+                            </div>
+                            <div class="form-col">
+                                <label for="phone">Phone</label>
+                                <input type="text" id="phone" >
+                            </div>
+                        </div>
+                    </div>
+                    
+                   
+
+                    <button type="submit" class="submit-btn">Submit Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 20px; right: 20px;">
+        <button onclick="trackRequest()" style="
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 4px; 
+            cursor: pointer;
+        ">Track Request</button>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditProfile()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label for="editName">Name</label>
+                    <input type="text" id="editName" >
+                </div>
+                <div class="form-group">
+                    <label for="editContact">Contact Number</label>
+                    <input type="text" id="editContact" >
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="text" id="editEmail" >
+                </div>
+                <button type="submit" class="submit-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+  <!-- Add this script section to your existing HTML -->
+  <script>
+    const studentData = {
+      id: 'S12345',
+      name: 'John Doe',
+      regNo: 'GE21CS1001',
+      course: 'B.Tech',
+      branch: 'CS',
+      semester: '6',
+      contact: '9876543210'
+    };
+
+    const requestTracker = {
+      async submitRequest(formData) {
+        try {
+          const response = await fetch('http://localhost:3000/submit-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...formData,
+              studentId: studentData.id,
+              studentName: studentData.name
+            })
+          });
+
+          const data = await response.json();
+          console.log('✅ Response from backend:', data);
+          return data;
+        } catch (error) {
+          console.error('❌ Error submitting request:', error);
+          return { success: false, message: 'Failed to submit request' };
+        }
+      },
+
+      async getRequestStatus(requestId) {
+        try {
+          const response = await fetch(`http://localhost:3000/track-request/${requestId}`);
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error('❌ Error fetching request:', error);
+          return { success: false, message: 'Failed to fetch request status' };
+        }
+      }
+    };
+
+    document.getElementById('certificateRequestForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const requiredFields = ['name', 'course', 'branch', 'collegeAdmissionNo', 'collegeAdmissionDate', 'university', 'regNo', 'semester', 'reason', 'contactAddress', 'phone'];
+      let isValid = true;
+
+      requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+          field.style.borderColor = 'red';
+          isValid = false;
+        } else {
+          field.style.borderColor = '';
+        }
+      });
+
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const selectedCertificates = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.id);
+      if (selectedCertificates.length === 0) {
+        showNotification('Please select at least one certificate type', 'error');
+        isValid = false;
+      }
+
+      const phone = document.getElementById('phone').value;
+      if (!/^[6-9]\d{9}$/.test(phone)) {
+        showNotification('Please enter a valid phone number', 'error');
+        document.getElementById('phone').style.borderColor = 'red';
+        isValid = false;
+      }
+
+      if (isValid) {
+        const formData = {
+          name: document.getElementById('name').value,
+          course: document.getElementById('course').value,
+          branch: document.getElementById('branch').value,
+          collegeAdmissionNo: document.getElementById('collegeAdmissionNo').value,
+          collegeAdmissionDate: document.getElementById('collegeAdmissionDate').value,
+          university: document.getElementById('university').value,
+          regNo: document.getElementById('regNo').value,
+          semester: document.getElementById('semester').value,
+          hostelDetails: document.getElementById('hostelDetails').value,
+          tcNo: document.getElementById('tcNo').value,
+          certificatesRequested: selectedCertificates,
+          reason: document.getElementById('reason').value,
+          contactAddress: document.getElementById('contactAddress').value,
+          phone,
+          otherDetails: document.getElementById('otherDetails').value
+        };
+
+        const result = await requestTracker.submitRequest(formData);
+
+        if (result.success) {
+          showNotification(`Request submitted! ID: ${result.requestId}`, 'success');
+          const myRequests = JSON.parse(localStorage.getItem('myRequests') || '[]');
+          myRequests.push(result.requestId);
+          localStorage.setItem('myRequests', JSON.stringify(myRequests));
+          this.reset();
+        } else {
+          showNotification('Submission failed. Try again.', 'error');
+        }
+      }
+    });
+
+    async function trackRequest() {
+      const requestId = prompt("Enter your Request ID:");
+      if (requestId) {
+        const data = await requestTracker.getRequestStatus(requestId);
+        if (data.success) {
+          const req = data.request;
+          const updates = req.updates.map(update => `
+            <div>
+              <p><strong>${new Date(update.timestamp).toLocaleString()}</strong></p>
+              <p>${update.message} (${update.status})</p>
+            </div>
+          `).join('');
+
+          const modalHTML = `
+            <div class="modal-content">
+              <span class="close-btn" onclick="closeModal()">&times;</span>
+              <h2>Tracking Request: ${req.requestId}</h2>
+              <p><strong>Status:</strong> ${req.status}</p>
+              <p><strong>Submitted On:</strong> ${new Date(req.timestamp).toLocaleString()}</p>
+              <div>${updates}</div>
+            </div>
+          `;
+          showModal('Request Tracking', modalHTML);
+        } else {
+          showNotification(data.message || 'Request not found', 'error');
+        }
+      }
+    }
+
+    function showNotification(message, type) {
+      const container = document.getElementById('notificationContainer');
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      container.appendChild(notification);
+      setTimeout(() => notification.remove(), 4000);
+    }
+
+    function showModal(title, content) {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.id = 'trackingModal';
+      modal.innerHTML = content;
+      document.body.appendChild(modal);
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('trackingModal');
+      if (modal) modal.remove();
+    }
+
+    window.onload = function () {
+      // prefill form with mock studentData
+      document.getElementById('name').value = studentData.name;
+      document.getElementById('regNo').value = studentData.regNo;
+      document.getElementById('course').value = studentData.course;
+      document.getElementById('branch').value = studentData.branch;
+      document.getElementById('semester').value = studentData.semester;
+      document.getElementById('phone').value = studentData.contact;
+
+      // populate sidebar info (optional)
+      document.getElementById('studentName').textContent = studentData.name;
+      document.getElementById('studentId').textContent = studentData.id;
+      document.getElementById('studentCourse').textContent = studentData.course;
+      document.getElementById('studentBranch').textContent = studentData.branch;
+      document.getElementById('studentSemester').textContent = studentData.semester;
+      document.getElementById('studentRegNo').textContent = studentData.regNo;
+    };
+  </script>
+</body>
+</html>

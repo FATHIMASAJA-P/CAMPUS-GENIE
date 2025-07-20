@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <!--<link rel='stylesheet' href='/stylesheets/style.css' />-->
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.6),
+                rgba(0, 0, 0, 0.7)
+            ),
+            url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')  center/cover;
+            background-attachment: fixed;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 100px;
+        }
+
+        .content-wrapper {
+            position: absolute;
+            left: 100px;
+            max-width: 600px;
+            color: white;
+        }
+
+        .content-wrapper h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .content-wrapper p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .login-container, .reset-container {
+            width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            color: #fff;
+            font-size: 2em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .forgot-password {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .forgot-password:hover {
+            color: #fff;
+        }
+
+        .login-btn, .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .reset-container {
+            display: none;
+        }
+        #resetMessage {
+    color: #4CAF50; /* Green color to indicate success */
+    font-size: 0.9em;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
+
+    <script>
+        function showResetForm() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('resetContainer').style.display = 'block';
+        }
+
+        function showLoginForm() {
+            document.getElementById('resetContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+        }
+
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    try{
+    const response = await fetch("http://localhost:5006/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.user.username);
+        alert("Login successful!");
+        switch(data.user.role) {
+                case 'student':
+                    window.location.href = "studentdashboard.html";
+                    break;
+                case 'faculty':
+                    window.location.href = "facultydashboard.html";
+                    break;
+                case 'hod':
+                    window.location.href = "hoddashboard.html";
+                    break;
+                default:
+                    window.location.href = "studentdashboard.html";
+            }
+        } else {
+            alert("Login failed: " + data.message);
+        } } catch (error) {
+        console.error("Login error:", error);
+        alert("Login failed. Please try again.");
+    }
+});
+    
+
+ 
+
+        document.getElementById('resetForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent actual form submission
+
+    let resetMessage = document.getElementById('resetMessage');
+    
+    // Show notification message
+    resetMessage.textContent = "✅ Password reset link sent to your email!";
+    resetMessage.style.opacity = "1";  // Make the message visible
+
+    // Hide message and switch to login form after 2 seconds
+    setTimeout(() => {
+        resetMessage.style.opacity = "0";  // Fade out effect
+        showLoginForm();
+    }, 2000);
+});
+
+    </script>
+
+  </head>
+  <body>
+    {{{body}}}
+  </body>
+</html>

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Office Staff Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      display: flex;
+      background-color: #1a1a1a;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 320px;
+      background-color: #1a1a1a;
+      padding: 25px;
+      border-right: 1px solid #333;
+    }
+    
+    .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .profile-photo {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background-color: #444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: #ddd;
+    }
+    
+    .user-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    
+    .user-id {
+      color: #999;
+      margin-bottom: 20px;
+    }
+    
+    .edit-profile {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 30px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .user-info {
+      margin-top: 40px;
+    }
+    
+    .info-label {
+      color: #999;
+      margin-bottom: 5px;
+    }
+    
+    .info-value {
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    
+    .dashboard-title {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-dropdown {
+      background-color: #333;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      min-width: 200px;
+      font-size: 16px;
+    }
+    
+    .search-bar {
+      flex-grow: 1;
+      min-width: 250px;
+      background-color: #333;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    
+    .stats-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .stat-card {
+      flex: 1;
+      min-width: 180px;
+      background-color: #222;
+      border-radius: 10px;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      color: #888;
+      font-size: 16px;
+      text-align: center;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #333;
+      overflow-x: auto;
+      padding-bottom: 1px;
+    }
+    
+    .tab {
+      padding: 15px 0;
+      margin-right: 30px;
+      cursor: pointer;
+      position: relative;
+      color: #888;
+      white-space: nowrap;
+    }
+    
+    .tab.active {
+      color: white;
+    }
+    
+    .tab-count {
+      margin-left: 5px;
+      color: #888;
+    }
+    
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 100%;
+      height: 3px;
+      background-color: #4CAF50;
+    }
+    
+    .college-name {
+      text-align: center;
+      color: #4CAF50;
+      font-size: 24px;
+      margin: 30px 0 20px;
+    }
+    
+    .request-card {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .request-title {
+      color: #4CAF50;
+      font-size: 20px;
+    }
+    
+    .request-date {
+      color: #888;
+    }
+    
+    .request-details {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+    }
+    
+    .request-label {
+      color: #888;
+    }
+    
+    .request-value {
+      color: white;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .process-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .approve-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .reject-btn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .view-btn {
+      background-color: #ff9800;
+      color: white;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .badge-cs {
+      background-color: #3498db;
+    }
+
+    .badge-ee {
+      background-color: #e74c3c;
+    }
+
+    .badge-me {
+      background-color: #9b59b6;
+    }
+
+    .badge-ce {
+      background-color: #f39c12;
+    }
+
+    .forwarded-by {
+      color: #4CAF50;
+      font-style: italic;
+      margin-top: 5px;
+    }
+
+    .priority-high {
+      color: #f44336;
+      font-weight: bold;
+    }
+
+    .activity-section {
+      margin-top: 40px;
+      display: none;
+    }
+
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+    }
+
+    .activity-card {
+      background-color: #222;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .activity-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .activity-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .activity-date {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .activity-content {
+      line-height: 1.5;
+    }
+
+    .activity-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #888;
+    }
+
+    .activity-status {
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    .status-upcoming {
+      background-color: #3498db;
+      color: white;
+    }
+
+    .status-ongoing {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .status-completed {
+      background-color: #2ecc71;
+      color: white;
+    }
+
+    .status-canceled {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .nav-menu {
+      margin-top: 40px;
+    }
+
+    .nav-item {
+      padding: 12px 15px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item:hover {
+      background-color: #333;
+    }
+
+    .nav-item.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-content {
+      display: none;
+    }
+
+    .section-content.active {
+      display: block;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .page-item {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #333;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .page-item.active {
+      background-color: #4CAF50;
+    }
+
+    .calendar-view {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .calendar-header {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .calendar-day {
+      text-align: center;
+      padding: 5px;
+      font-weight: bold;
+      color: #888;
+    }
+
+    .calendar-date {
+      height: 100px;
+      background-color: #222;
+      border-radius: 5px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .date-number {
+      text-align: right;
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 5px;
+    }
+
+    .has-events {
+      position: relative;
+    }
+
+    .has-events::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+    }
+
+    .date-events {
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .event-item {
+      margin-bottom: 3px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      background-color: rgba(76, 175, 80, 0.2);
+    }
+
+    .notifications-container {
+      position: relative;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      background-color: #f44336;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .department-label {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333;
+      }
+      
+      .request-details {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile-container">
+      <div class="profile-photo">Profile Photo</div>
+      <h2 class="user-name">JOHN WILLIAMS</h2>
+      <div class="user-id">ADMIN2023A015</div>
+      <button class="edit-profile">Edit Profile</button>
+    </div>
+    
+    <div class="nav-menu">
+      <div class="nav-item active" data-target="requests">
+        <div class="nav-icon">📋</div>
+        Request Forms
+      </div>
+      <div class="nav-item" data-target="activities">
+        <div class="nav-icon">🎓</div>
+        Student Activities
+      </div>
+      <div class="nav-item" data-target="calendar">
+        <div class="nav-icon">📅</div>
+        Calendar
+      </div>
+      <div class="nav-item notifications-container" data-target="notifications">
+        <div class="nav-icon">🔔</div>
+        Notifications
+        <div class="notification-badge">5</div>
+      </div>
+      <div class="nav-item" data-target="reports">
+        <div class="nav-icon">📊</div>
+        Reports
+      </div>
+      <div class="nav-item" data-target="settings">
+        <div class="nav-icon">⚙️</div>
+        Settings
+      </div>
+    </div>
+    
+    <div class="user-info">
+      <div class="info-label">Office:</div>
+      <div class="info-value">Administrative Block, Room 102</div>
+      
+      <div class="info-label">Designation:</div>
+      <div class="info-value">Senior Administrative Officer</div>
+      
+      <div class="info-label">Email:</div>
+      <div class="info-value">john.williams@gecidukki.ac.in</div>
+      
+      <div class="info-label">Phone:</div>
+      <div class="info-value">+91 9876543210</div>
+    </div>
+  </div>
+  
+  <div class="main-content">
+    <h1 class="dashboard-title">Office Staff Dashboard</h1>
+    
+    <!-- Requests Section -->
+    <div class="section-content active" id="requests-section">
+      <div class="filters">
+        <select class="filter-dropdown" id="department-filter">
+          <option value="all">All Departments</option>
+          <option value="cs">Computer Science</option>
+          <option value="ee">Electrical Engineering</option>
+          <option value="me">Mechanical Engineering</option>
+          <option value="ce">Civil Engineering</option>
+        </select>
+        
+        <select class="filter-dropdown" id="request-type-filter">
+          <option value="all">All Request Types</option>
+          <option value="certificate">Certificate Requests</option>
+          <option value="leave">Leave Applications</option>
+          <option value="equipment">Equipment Requests</option>
+          <option value="facility">Facility Bookings</option>
+          <option value="other">Others</option>
+        </select>
+        
+        <select class="filter-dropdown" id="status-filter">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="processed">Processed</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        
+        <input type="text" class="search-bar" placeholder="Search by name, ID, or keywords...">
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-number">126</div>
+          <div class="stat-label">Total Requests</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">42</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">29</div>
+          <div class="stat-label">Processed Today</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">High Priority</div>
+        </div>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active">All Requests <span class="tab-count">(126)</span></div>
+        <div class="tab">Pending Review <span class="tab-count">(42)</span></div>
+        <div class="tab">Recently Processed <span class="tab-count">(35)</span></div>
+        <div class="tab">Approved <span class="tab-count">(84)</span></div>
+        <div class="tab">Rejected <span class="tab-count">(16)</span></div>
+      </div>
+      
+      <div class="college-name">GOVERNMENT ENGINEERING COLLEGE IDUKKI</div>
+      
+      <!-- Request Cards -->
+      <div class="request-card">
+        <div class="request-header">
+          <div>
+            <div class="request-title">Certificate Request <span class="badge badge-cs">CS</span></div>
+            <div class="forwarded-by">Forwarded by: Dr. Anita Sharma, HOD Computer Science</div>
+          </div>
+          <div class="request-date">04/04/2025, 09:15 AM</div>
+        </div>
+        
+        <div class="request-details">
+          <div class="request-label">Student Name:</div>
+          <div class="request-value">ARUN KUMAR K</div>
+          
+          <div class="request-label">ID:</div>
+          <div class="request-value">2022CS001</div>
+
+          <div class="request-label">Certificate Type:</div>
+          <div class="request-value">Course Completion</div>
+          
+          <div class="request-label">Reason:</div>
+          <div class="request-value">Higher studies application requirement</div>
+          
+          <div class="request-label">Status:</div>
+          <div class="request-value">Pending Review (HOD Approved)</div>
+          
+          <div class="request-label">Priority:</div>
+          <div class="request-value priority-high">High - Required by 10/04/2025</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Details</button>
+          <button class="action-btn process-btn">Process</button>
+          <button class="action-btn approve-btn">Approve</button>
+          <button class="action-btn reject-btn">Reject</button>
+        </div>
+      </div>
+      
+      <div class="request-card">
+        <div class="request-header">
+          <div>
+            <div class="request-title">Leave Application <span class="badge badge-me">ME</span></div>
+            <div class="forwarded-by">Forwarded by: Dr. Rajesh Kumar, HOD Mechanical Engineering</div>
+          </div>
+          <div class="request-date">03/04/2025, 11:30 AM</div>
+        </div>
+        
+        <div class="request-details">
+          <div class="request-label">Student Name:</div>
+          <div class="request-value">PRIYA PATEL</div>
+          
+          <div class="request-label">ID:</div>
+          <div class="request-value">2023ME045</div>
+
+          <div class="request-label">Leave Type:</div>
+          <div class="request-value">Medical Leave</div>
+          
+          <div class="request-label">Duration:</div>
+          <div class="request-value">April 6 - April 12, 2025 (7 days)</div>
+          
+          <div class="request-label">Reason:</div>
+          <div class="request-value">Surgery and recovery</div>
+          
+          <div class="request-label">Status:</div>
+          <div class="request-value">Pending Review (HOD Approved)</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Details</button>
+          <button class="action-btn process-btn">Process</button>
+          <button class="action-btn approve-btn">Approve</button>
+          <button class="action-btn reject-btn">Reject</button>
+        </div>
+      </div>
+      
+      <div class="request-card">
+        <div class="request-header">
+          <div>
+            <div class="request-title">Equipment Request <span class="badge badge-ee">EE</span></div>
+            <div class="forwarded-by">Forwarded by: Dr. Meena Sharma, HOD Electrical Engineering</div>
+          </div>  
+          <div class="request-date">02/04/2025, 03:45 PM</div>
+        </div>
+        
+        <div class="request-details">
+          <div class="request-label">Request By:</div>
+          <div class="request-value">Prof. Sunil Menon</div>
+          
+          <div class="request-label">Department:</div>
+          <div class="request-value">Electrical Engineering</div>
+
+          <div class="request-label">Equipment:</div>
+          <div class="request-value">Oscilloscopes (10 units)</div>
+          
+          <div class="request-label">Purpose:</div>
+          <div class="request-value">Required for Signals and Systems Laboratory</div>
+          
+          <div class="request-label">Status:</div>
+          <div class="request-value">Pending Review (HOD Approved)</div>
+          
+          <div class="request-label">Priority:</div>
+          <div class="request-value priority-high">High - Required for next semester preparations</div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Details</button>
+          <button class="action-btn process-btn">Process</button>
+          <button class="action-btn approve-btn">Approve</button>
+          <button class="action-btn reject-btn">Reject</button>
+        </div>
+      </div>
+      
+      <div class="pagination">
+        <div class="page-item active">1</div>
+        <div class="page-item">2</div>
+        <div class="page-item">3</div>
+        <div class="page-item">4</div>
+        <div class="page-item">></div>
+      </div>
+    </div>
+    
+    <!-- Student Activities Section -->
+    <div class="section-content" id="activities-section">
+      <div class="filters">
+        <select class="filter-dropdown">
+          <option>All Activity Types</option>
+          <option>Technical Events</option>
+          <option>Cultural Events</option>
+          <option>Sports Events</option>
+          <option>Workshops</option>
+          <option>Competitions</option>
+        </select>
+        
+        <select class="filter-dropdown">
+          <option>All Departments</option>
+          <option>Computer Science</option>
+          <option>Electrical Engineering</option>
+          <option>Mechanical Engineering</option>
+          <option>Civil Engineering</option>
+        </select>
+        
+        <select class="filter-dropdown">
+          <option>All Statuses</option>
+          <option>Upcoming</option>
+          <option>Ongoing</option>
+          <option>Completed</option>
+          <option>Canceled</option>
+        </select>
+        
+        <input type="text" class="search-bar" placeholder="Search activities...">
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-number">32</div>
+          <div class="stat-label">Total Activities</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Upcoming</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Ongoing</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-number">15</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active">All Activities <span class="tab-count">(32)</span></div>
+        <div class="tab">Upcoming <span class="tab-count">(12)</span></div>
+        <div class="tab">Ongoing <span class="tab-count">(5)</span></div>
+        <div class="tab">Completed <span class="tab-count">(15)</span></div>
+      </div>
+      
+      <div class="college-name">GOVERNMENT ENGINEERING COLLEGE IDUKKI</div>
+      
+      <!-- Activity Cards -->
+      <div class="activity-card">
+        <div class="activity-header">
+          <div class="activity-title">Annual Technical Symposium <span class="badge badge-cs">CS</span></div>
+          <div class="activity-date">April 15-17, 2025</div>
+        </div>
+        
+        <div class="activity-content">
+          Three-day technical symposium organized by the Computer Science department featuring workshops, coding competitions, technical talks, and project exhibitions. Expected participation: 300+ students from various colleges.
+        </div>
+        
+        <div class="activity-footer">
+          <div>Coordinator: Dr. Anita Sharma</div>
+          <div class="activity-status status-upcoming">Upcoming</div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Details</button>
+        </div>
+      </div>
+      
+      <div class="activity-card">
+        <div class="activity-header">
+          <div class="activity-title">Bridge Design Contest <span class="badge badge-ce">CE</span></div>
+          <div class="activity-date">April 8-10, 2025</div>
+        </div>
+        
+        <div class="activity-content">
+          Civil Engineering department's annual competition where students design and build model bridges to test structural integrity under various loads. Winners get internship opportunities with leading construction firms.
+        </div>
+        
+        <div class="activity-footer">
+          <div>Coordinator: Prof. Vijay Menon</div>
+          <div class="activity-status status-ongoing">Ongoing</div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Details</button>
+        </div>
+      </div>
+      
+      <div class="activity-card">
+        <div class="activity-header">
+          <div class="activity-title">Robotics Exhibition <span class="badge badge-ee">EE</span></div>
+          <div class="activity-date">April 3-5, 2025</div>
+        </div>
+        
+        <div class="activity-content">
+          Exhibition showcasing student-designed robots and automated systems. Features live demonstrations, technical presentations, and interactive sessions for visitors. Open to public and school students to promote STEM education.
+        </div>
+        
+        <div class="activity-footer">
+          <div>Coordinator: Dr. Meena Sharma</div>
+          <div class="activity-status status-completed">Completed</div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="action-btn view-btn">View Report</button>
+        </div>
+      </div>
+      
+      <div class="pagination">
+        <div class="page-item active">1</div>
+        <div class="page-item">2</div>
+        <div class="page-item">3</div>
+        <div class="page-item">></div>
+      </div>
+    </div>
+    
+    <!-- Calendar Section -->
+    <div class="section-content" id="calendar-section">
+      <div class="filters">
+        <select class="filter-dropdown">
+          <option>April 2025</option>
+          <option>May 2025</option>
+          <option>June 2025</option>
+        </select>
+        
+        <select class="filter-dropdown">
+          <option>All Event Types</option>
+          <option>Academic Events</option>
+          <option>Administrative Events</option>
+          <option>Student Activities</option>
+          <option>Holidays</option>
+        </select>
+        
+        <select class="filter-dropdown">
+          <option>All Departments</option>
+          <option>Computer Science</option>
+          <option>Electrical Engineering</option>
+          <option>Mechanical Engineering</option>
+          <option>Civil Engineering</option>
+        </select>
+      </div>
+      
+      <div class="college-name">GOVERNMENT ENGINEERING COLLEGE IDUKKI</div>
+      
+      <div class="calendar-header">
+        <div class="calendar-day">Sun</div>
+        <div class="calendar-day">Mon</div>
+        <div class="calendar-day">Tue</div>
+        <div class="calendar-day">Wed</div>
+        <div class="calendar-day">Thu</div>
+        <div class="calendar-day">Fri</div>
+        <div class="calendar-day">Sat</div>
+      </div>
+      
+      <div class="calendar-view">
+        <!-- Row 1 -->
+        <div class="calendar-date">
+          <div class="date-number">1</div>
+        </div>
+        <div class="calendar-date">
+          <div class="date-number">2</div>
+          <div class="date-events">
+            <div class="event-item">Staff Meeting</div>
+          </div>
+        </div>
+        <div class="calendar-date has-events">

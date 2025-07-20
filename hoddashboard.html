@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Dashboard - Department Management System</title>
+    <style>
+        :root {
+    /* Main color palette */
+    --primary-color: #4CAF50;
+    --primary-light: #60ad5e;
+    --primary-dark: #388E3C;
+    
+    --secondary-color: #2196F3;
+    --secondary-light: #64B5F6;
+    --secondary-dark: #1976D2;
+    
+    --danger-color: #F44336;
+    --danger-light: #EF5350;
+    --danger-dark: #D32F2F;
+    
+    --warning-color: #FF9800;
+    --warning-light: #FFB74D;
+    --warning-dark: #F57C00;
+    
+    /* Background colors */
+    --light-bg: #1E1E1E;
+    --dark-bg: #121212;
+    
+    /* Text colors */
+    --text-light: #FFFFFF;
+    --text-dark: #E0E0E0;
+    --text-muted: #9E9E9E;
+    
+    /* Border and shadow */
+    --border-color: #333333;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --box-shadow-hover: 0 4px 8px rgba(0, 0, 0, 0.4);
+    
+    /* Spacing */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+    
+    /* Border radius */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 15px;
+    --border-radius-circle: 50%;
+    
+    /* Transitions */
+    --transition-speed: 0.3s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #1A1A1A;
+    color: var(--text-light);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #333;
+}
+
+.profile-section {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: var(--border-radius-circle);
+    background-color: #444;
+    margin: 0 auto var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 16px;
+    box-shadow: var(--box-shadow);
+}
+
+.profile-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+}
+
+.profile-id {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+}
+
+.edit-profile-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color var(--transition-speed),
+                transform var(--transition-speed),
+                box-shadow var(--transition-speed);
+}
+
+.edit-profile-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+.profile-details {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+}
+
+.profile-detail {
+    margin-bottom: var(--spacing-md);
+}
+
+.profile-detail strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.profile-detail span {
+    font-size: 15px;
+}
+
+.main-content {
+    flex: 1;
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    background-color: var(--dark-bg);
+}
+
+.header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.filters {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-select {
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: #333;
+    color: var(--text-light);
+    min-width: 180px;
+}
+
+.search-input {
+    flex: 1;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: #333;
+    color: var(--text-light);
+}
+
+.tab-nav {
+    display: flex;
+    margin-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    transition: color var(--transition-speed);
+    color: var(--text-light);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.counts {
+    color: var(--text-muted);
+    margin-left: 5px;
+}
+
+.college-name {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 24px;
+    margin: var(--spacing-lg) 0;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.department-stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+    background-color: #1A1A1A;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    flex: 1;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow var(--transition-speed);
+}
+
+.stat-card:hover {
+    box-shadow: var(--box-shadow-hover);
+}
+
+.stat-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.requests-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.request-card {
+    background-color: #1A1A1A;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: var(--box-shadow);
+    transition: box-shadow var(--transition-speed);
+}
+
+.request-card:hover {
+    box-shadow: var(--box-shadow-hover);
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.request-title {
+    font-size: 18px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.request-timestamp {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.request-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-item {
+    margin-bottom: var(--spacing-sm);
+}
+
+.detail-label {
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.detail-value {
+    font-size: 15px;
+}
+
+.request-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.action-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-sm);
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color var(--transition-speed),
+                transform var(--transition-speed),
+                box-shadow var(--transition-speed);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+.view-btn {
+    background-color: var(--secondary-color);
+}
+
+.view-btn:hover {
+    background-color: var(--secondary-dark);
+}
+
+.approve-btn {
+    background-color: var(--primary-color);
+}
+
+.approve-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.reject-btn {
+    background-color: var(--danger-color);
+}
+
+.reject-btn:hover {
+    background-color: var(--danger-dark);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-lg);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.status-pending {
+    background-color: var(--warning-color);
+    color: var(--text-dark);
+}
+
+.status-approved {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.status-rejected {
+    background-color: var(--danger-color);
+    color: var(--text-light);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #1A1A1A;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    color: var(--text-light);
+}
+
+.close-modal {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.modal-title {
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-color);
+    font-size: 22px;
+}
+
+.modal-body {
+    margin-bottom: var(--spacing-lg);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.hidden {
+    display: none;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-radius: var(--border-radius-sm);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 1000;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+    .department-stats {
+        flex-wrap: wrap;
+    }
+    
+    .stat-card {
+        min-width: calc(50% - var(--spacing-lg));
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: var(--spacing-md);
+    }
+    
+    .profile-photo {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .filters {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .filter-select, .search-input {
+        width: 100%;
+    }
+    
+    .tab-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .request-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .request-actions {
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+        
+       
+        
+       
+       
+          
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar with HOD Profile -->
+        <div class="sidebar">
+            <div class="profile-section">
+                <div class="profile-photo">Profile Photo</div>
+                <h2 class="profile-name">Dr. VIJAYANAND KS </h2>
+                <p class="profile-id">HOD2023T042</p>
+                <button class="edit-profile-btn">Edit Profile</button>
+            </div>
+            
+            <div class="profile-details">
+                <div class="profile-detail">
+                    <strong>Department:</strong>
+                    <span>Information Technology</span>
+                </div>
+                <div class="profile-detail">
+                    <strong>Designation:</strong>
+                    <span>Professor & Head</span>
+                </div>
+                <div class="profile-detail">
+                    <strong>Office:</strong>
+                    <span>IT-201</span>
+                </div>
+                <div class="profile-detail">
+                    <strong>Email:</strong>
+                    <span>vijayanand.ks@gecidukki.ac.in</span>
+                </div>
+                <div class="profile-detail">
+                    <strong>Phone:</strong>
+                    <span>+91 98XXXXXXXX</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Department Dashboard</h1>
+                
+                <!-- Filters and Search -->
+                <div class="filters">
+                    <select class="filter-select">
+                        <option>All Request Types</option>
+                        <option>Certificate Request</option>
+                        <option>Leave Application</option>
+                        <option>Equipment Request</option>
+                        <option>Lab Access</option>
+                    </select>
+                    
+                    <select class="filter-select">
+                        <option>All Statuses</option>
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                    </select>
+                    
+                    <input type="text" class="search-input" placeholder="Search by student name or ID...">
+                </div>
+            </div>
+            
+            <!-- Department Statistics -->
+            <div class="department-stats">
+                <div class="stat-card">
+                    <div class="stat-value">245</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Faculty Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">42</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+            </div>
+            
+            <!-- Tabs for different request statuses -->
+            <div class="tab-nav">
+                <div class="tab-btn active">Pending <span class="counts">(8)</span></div>
+                <div class="tab-btn">Approved <span class="counts">(28)</span></div>
+                <div class="tab-btn">Rejected <span class="counts">(6)</span></div>
+                <div class="tab-btn">All Requests <span class="counts">(42)</span></div>
+            </div>
+            
+            <h2 class="college-name">GOVERNMENT ENGINEERING COLLEGE IDUKKI</h2>
+            
+            <!-- Request Cards -->
+            <div class="requests-container">
+                <!-- Request Card 1 -->
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-title">Certificate Request</div>
+                        <div class="request-timestamp">28/02/2025, 10:15 AM</div>
+                    </div>
+                    
+                    <div class="request-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Name:</div>
+                            <div class="detail-value">FARISA U</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">ID:</div>
+                            <div class="detail-value">2022IT001</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Course:</div>
+                            <div class="detail-value">B.Tech - Computer Science</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Semester:</div>
+                            <div class="detail-value">6</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Certificate Type:</div>
+                            <div class="detail-value">Course Completion Certificate</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Purpose:</div>
+                            <div class="detail-value">Internship Application</div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-actions">
+                        <span class="status-badge status-pending">Pending</span>
+                        <button class="action-btn view-btn">View Details</button>
+                        <button class="action-btn approve-btn">Approve</button>
+                        <button class="action-btn reject-btn">Reject</button>
+                    </div>
+                </div>
+                
+                <!-- Request Card 2 -->
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-title">Leave Application</div>
+                        <div class="request-timestamp">27/02/2025, 02:30 PM</div>
+                    </div>
+                    
+                    <div class="request-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Name:</div>
+                            <div class="detail-value">PRIYA SINGH</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">ID:</div>
+                            <div class="detail-value">2023CS015</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Course:</div>
+                            <div class="detail-value">B.Tech - Computer Science</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Semester:</div>
+                            <div class="detail-value">4</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Leave Period:</div>
+                            <div class="detail-value">01/03/2025 - 05/03/2025</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Reason:</div>
+                            <div class="detail-value">Family Function</div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-actions">
+                        <span class="status-badge status-pending">Pending</span>
+                        <button class="action-btn view-btn">View Details</button>
+                        <button class="action-btn approve-btn">Approve</button>
+                        <button class="action-btn reject-btn">Reject</button>
+                    </div>
+                </div>
+                
+                <!-- Request Card 3 -->
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-title">Equipment Request</div>
+                        <div class="request-timestamp">26/02/2025, 09:45 AM</div>
+                    </div>
+                    
+                    <div class="request-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Name:</div>
+                            <div class="detail-value">RAHUL NAIR</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">ID:</div>
+                            <div class="detail-value">2021CS032</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Course:</div>
+                            <div class="detail-value">B.Tech - Computer Science</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Semester:</div>
+                            <div class="detail-value">8</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Equipment:</div>
+                            <div class="detail-value">Raspberry Pi 4 Kit</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Purpose:</div>
+                            <div class="detail-value">Final Year Project</div>
+                        </div>
+                    </div>
+                    
+                    <div class="request-actions">
+                        <span class="status-badge status-pending">Pending</span>
+                        <button class="action-btn view-btn">View Details</button>
+                        <button class="action-btn approve-btn">Approve</button>
+                        <button class="action-btn reject-btn">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>  change css code like above screenshoot like color theme
+
+
+ChatGPT said:
+​

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Genie - Faculty Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #1e1e1e;
+      color: #ffffff;
+    }
+    
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background-color: #252525;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #333;
+    }
+    
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #333;
+      margin-bottom: 20px;
+    }
+    
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 60px;
+      background-color: #444;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .faculty-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    
+    .faculty-id {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 15px;
+    }
+    
+    .edit-profile-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .edit-profile-btn:hover {
+      background-color: #45a049;
+    }
+    
+    .faculty-details {
+      margin-top: 20px;
+    }
+    
+    .faculty-details p {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    
+    .page-title {
+      font-size: 32px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    
+    .section-title {
+      color: #4CAF50;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .request-card {
+      background-color: #2a2a2a;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s;
+    }
+    
+    .request-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    
+    .request-type {
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    
+    .request-date {
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .student-info {
+      margin-bottom: 15px;
+    }
+    
+    .student-info p {
+      margin-bottom: 5px;
+    }
+    
+    .request-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #444;
+    }
+    
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .status-pending {
+      background-color: #FF9800;
+      color: #000;
+    }
+    
+    .status-approved {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+    
+    .status-rejected {
+      background-color: #F44336;
+      color: #fff;
+    }
+    
+    .action-btns {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .approve-btn, .reject-btn, .view-btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    
+    .approve-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .approve-btn:hover {
+      background-color: #45a049;
+    }
+    
+    .reject-btn {
+      background-color: #F44336;
+      color: white;
+    }
+    
+    .reject-btn:hover {
+      background-color: #d32f2f;
+    }
+    
+    .view-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+    
+    .view-btn:hover {
+      background-color: #0b7dda;
+    }
+    
+    .filter-section {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter-dropdown, .search-input {
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background-color: #333;
+      color: #fff;
+      font-size: 14px;
+    }
+    
+    .filter-dropdown {
+      min-width: 180px;
+    }
+    
+    .search-input {
+      flex-grow: 1;
+      min-width: 250px;
+    }
+    
+    .search-input::placeholder {
+      color: #aaa;
+    }
+    
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #F44336;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #444;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      border-bottom: 3px solid #4CAF50;
+      color: #4CAF50;
+    }
+    
+    .tab:hover:not(.active) {
+      background-color: #333;
+    }
+    
+    .no-requests {
+      text-align: center;
+      padding: 40px;
+      color: #aaa;
+      font-style: italic;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #444;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .page-btn.active {
+      background-color: #4CAF50;
+      border-color: #4CAF50;
+    }
+    
+    .page-btn:hover:not(.active) {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="profile-section">
+        <div class="profile-photo">Profile Photo</div>
+        <h2 class="faculty-name">Preenu Mol</h2>
+        <p class="faculty-id">FAC2022T035</p>
+        <button class="edit-profile-btn">Edit Profile</button>
+      </div>
+      <div class="faculty-details">
+        <p><strong>Department:</strong> Information Technology</p>
+        <p><strong>Designation:</strong> Assistant Professor</p>
+        <p><strong>Office:</strong> IT-308</p>
+        <p><strong>Email:</strong> preenu.mol@gecidukki.ac.in</p>
+        <p><strong>Phone:</strong> +91 94XXXXXXXX</p>
+      </div>
+    </div>
+    
+    <div class="main-content">
+      <h1 class="page-title">Student Requests</h1>
+      
+      <div class="filter-section">
+        <select class="filter-dropdown">
+          <option value="all">All Request Types</option>
+          <option value="certificate">Certificates</option>
+          <option value="recommendation">Recommendation</option>
+          <option value="attestation">Attestation</option>
+          <option value="refund">Fee Refund</option>
+        </select>
+        
+        <select class="filter-dropdown">
+          <option value="all">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        
+        <input type="text" placeholder="Search by student name or ID..." class="search-input">
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active">Pending (5)</div>
+        <div class="tab">Approved (12)</div>
+        <div class="tab">Rejected (3)</div>
+        <div class="tab">All Requests (20)</div>
+      </div>
+      
+      <h2 class="section-title">GOVERNMENT ENGINEERING COLLEGE IDUKKI</h2>
+      
+      <!-- Request Cards -->
+      <div class="request-card">
+        <div class="request-header">
+          <div class="request-type">Certificate Request</div>
+          <div class="request-date">27/02/2025, 09:45 AM</div>
+        </div>
+        
+        <div class="student-info">
+          <p><strong>Name:</strong> FATHIMA SAJA P</p>
+          <p><strong>ID:</strong> 2024IT001</p>
+          <p><strong>Course:</strong> B.Tech - Information Technology</p>
+          <p><strong>Semester:</strong> 6</p>
+          <p><strong>Certificate Type:</strong> Course Completion Certificate</p>
+          <p><strong>Purpose:</strong> Internship Application</p>
+        </div>
+        
+        <div class="request-status">
+          <span class="status-badge status-pending">Pending</span>
+          <div class="action-btns">
+            <button class="view-btn">View Details</button>
+            <button class="approve-btn">Approve</button>
+            <button class="reject-btn">Reject</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="request-card">
+        <div class="request-header">
+          <div class="request-type">Recommendation Letter</div>
+          <div class="request-date">26/02/2025, 14:20 PM</div>
+        </div>
+        
+        <div class="student-info">
+          <p><strong>Name:</strong> ARJUN KUMAR M</p>
+          <p><strong>ID:</strong> 2024IT012</p>
+          <p><strong>Course:</strong> B.Tech - Information Technology</p>
+          <p><strong>Semester:</strong> 8</p>
+          <p><strong>Purpose:</strong> Higher Education Application</p>
+          <p><strong>University:</strong> Technical University of Munich</p>
+        </div>
+        
+        <div class="request-status">
+          <span class="status-badge status-pending">Pending</span>
+          <div class="action-btns">
+            <button class="view-btn">View Details</button>
+            <button class="approve-btn">Approve</button>
+            <button class="reject-btn">Reject</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="request-card">
+        <div class="request-header">
+          <div class="request-type">Attestation Request</div>
+          <div class="request-date">25/02/2025, 11:30 AM</div>
+        </div>
+        
+        <div class="student-info">
+          <p><strong>Name:</strong> NIKHIL THOMAS</p>
+          <p><strong>ID:</strong> 2024IT008</p>
+          <p><strong>Course:</strong> B.Tech - Information Technology</p>
+          <p><strong>Semester:</strong> 7</p>
+          <p><strong>Document Type:</strong> Project Completion Certificate</p>
+          <p><strong>Purpose:</strong> Employment Verification</p>
+        </div>
+        
+        <div class="request-status">
+          <span class="status-badge status-approved">Approved</span>
+          <div class="action-btns">
+            <button class="view-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="request-card">
+        <div class="request-header">
+          <div class="request-type">Refund Request</div>
+          <div class="request-date">24/02/2025, 10:15 AM</div>
+        </div>
+        
+        <div class="student-info">
+          <p><strong>Name:</strong> ANJU PRADEEP</p>
+          <p><strong>ID:</strong> 2024IT015</p>
+          <p><strong>Course:</strong> B.Tech - Information Technology</p>
+          <p><strong>Semester:</strong> 5</p>
+          <p><strong>Amount:</strong> ₹2,500</p>
+          <p><strong>Reason:</strong> Double Payment for Lab Fee</p>
+        </div>
+        
+        <div class="request-status">
+          <span class="status-badge status-rejected">Rejected</span>
+          <div class="action-btns">
+            <button class="view-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pagination">
+        <div class="page-btn active">1</div>
+        <div class="page-btn">2</div>
+        <div class="page-btn">3</div>
+        <div class="page-btn">4</div>
+        <div class="page-btn">→</div>
+      </div>
+    </div>
+    <div id="requests-container">
+      <!-- Requests will be loaded here dynamically -->
+      <div class="no-requests">Loading requests...</div>
+    </div>
+  </div>
+
+  <script>
+ document.addEventListener('DOMContentLoaded', function() {
+  const facultyId = 'FAC2022T035'; // This would come from auth in real app
+  let currentTab = 'pending';
+  let currentPage = 1;
+  const itemsPerPage = 5;
+  
+  // DOM elements
+  const requestsContainer = document.getElementById('requests-container');
+  const tabs = document.querySelectorAll('.tab');
+  const filterType = document.querySelector('.filter-dropdown:nth-of-type(1)');
+  const filterStatus = document.querySelector('.filter-dropdown:nth-of-type(2)');
+  const searchInput = document.querySelector('.search-input');
+  const pagination = document.querySelector('.pagination');
+  
+  // Load initial requests
+  loadRequests();
+  
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Determine which tab was clicked
+      if (this.textContent.includes('Pending')) {
+        currentTab = 'pending';
+      } else if (this.textContent.includes('Approved')) {
+        currentTab = 'approved';
+      } else if (this.textContent.includes('Rejected')) {
+        currentTab = 'rejected';
+      } else {
+        currentTab = 'all';
+      }
+      
+      currentPage = 1;
+      loadRequests();
+    });
+  });
+  
+  // Filter and search events
+  filterType.addEventListener('change', loadRequests);
+  filterStatus.addEventListener('change', loadRequests);
+  searchInput.addEventListener('input', debounce(loadRequests, 300));
+  
+  // Load requests from API
+  async function loadRequests() {
+    try {
+      requestsContainer.innerHTML = '<div class="no-requests">Loading requests...</div>';
+      
+      const type = filterType.value;
+      const status = currentTab === 'all' ? filterStatus.value : currentTab;
+      const search = searchInput.value.trim();
+      
+      const response = await fetch(`http://localhost:3000/faculty/requests?status=${status}&type=${type}&search=${search}`);
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to load requests');
+      }
+      
+      renderRequests(data.requests);
+      updateTabCounts(data.requests);
+      
+    } catch (error) {
+      console.error('Error loading requests:', error);
+      requestsContainer.innerHTML = `<div class="no-requests">Error: ${error.message}</div>`;
+    }
+  }
+  
+  // Render requests to the DOM
+  function renderRequests(requests) {
+    if (requests.length === 0) {
+      requestsContainer.innerHTML = '<div class="no-requests">No requests found</div>';
+      return;
+    }
+    
+    requestsContainer.innerHTML = '';
+    
+    requests.forEach(request => {
+      const requestCard = document.createElement('div');
+      requestCard.className = 'request-card';
+      
+      // Format date
+      const requestDate = new Date(request.timestamp).toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // Determine certificate type (simplified for example)
+      let certificateType = 'Certificate Request';
+      if (request.formData.certificatesRequested.includes('recommendation')) {
+        certificateType = 'Recommendation Letter';
+      } else if (request.formData.certificatesRequested.includes('attestation')) {
+        certificateType = 'Attestation Request';
+      } else if (request.formData.certificatesRequested.includes('refundFees')) {
+        certificateType = 'Refund Request';
+      }
+      
+      requestCard.innerHTML = `
+        <div class="request-header">
+          <div class="request-type">${certificateType}</div>
+          <div class="request-date">${requestDate}</div>
+        </div>
+        
+        <div class="student-info">
+          <p><strong>Name:</strong> ${request.formData.name}</p>
+          <p><strong>ID:</strong> ${request.formData.regNo}</p>
+          <p><strong>Course:</strong> ${request.formData.course} - ${request.formData.branch}</p>
+          <p><strong>Semester:</strong> ${request.formData.semester}</p>
+          ${certificateType === 'Certificate Request' ? 
+            `<p><strong>Certificate Type:</strong> ${request.formData.certificatesRequested.join(', ')}</p>` : ''}
+          <p><strong>Purpose:</strong> ${request.formData.reason || 'Not specified'}</p>
+        </div>
+        
+        <div class="request-status">
+          <span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span>
+          <div class="action-btns">
+            <button class="view-btn" data-request-id="${request.requestId}">View Details</button>
+            ${request.status === 'Submitted' || request.status === 'Pending' ? `
+              <button class="approve-btn" data-request-id="${request.requestId}">Approve</button>
+              <button class="reject-btn" data-request-id="${request.requestId}">Reject</button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+      
+      requestsContainer.appendChild(requestCard);
+    });
+    
+    // Add event listeners to new buttons
+    addButtonEventListeners();
+  }
+  
+  // Update tab counts (simplified - in real app you'd get counts from API)
+  function updateTabCounts(requests) {
+    const pendingCount = requests.filter(r => r.status === 'Submitted' || r.status === 'Pending').length;
+    const approvedCount = requests.filter(r => r.status === 'Approved').length;
+    const rejectedCount = requests.filter(r => r.status === 'Rejected').length;
+    
+    tabs[0].textContent = `Pending (${pendingCount})`;
+    tabs[1].textContent = `Approved (${approvedCount})`;
+    tabs[2].textContent = `Rejected (${rejectedCount})`;
+    tabs[3].textContent = `All Requests (${requests.length})`;
+  }
+  
+  // Add event listeners to action buttons
+  function addButtonEventListeners() {
+    // View buttons
+    document.querySelectorAll('.view-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const requestId = this.getAttribute('data-request-id');
+        viewRequestDetails(requestId);
+      });
+    });
+    
+    // Approve buttons
+    document.querySelectorAll('.approve-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const requestId = this.getAttribute('data-request-id');
+        updateRequestStatus(requestId, 'approve');
+      });
+    });
+    
+    // Reject buttons
+    document.querySelectorAll('.reject-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const requestId = this.getAttribute('data-request-id');
+        updateRequestStatus(requestId, 'reject');
+      });
+    });
+  }
+  
+  // View request details
+  function viewRequestDetails(requestId) {
+    alert(`Viewing details for request ${requestId}\nIn a real app, this would open a modal with full details.`);
+    // You would implement a modal here with all request details
+  }
+  
+  // Update request status
+  async function updateRequestStatus(requestId, action) {
+    try {
+      const response = await fetch(`http://localhost:3000/faculty/requests/${requestId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action })
+      });
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to update request');
+      }
+      
+      alert(`Request ${action}d successfully`);
+      loadRequests(); // Refresh the list
+      
+    } catch (error) {
+      console.error('Error updating request:', error);
+      alert(`Error: ${error.message}`);
+    }
+  }
+  
+  // Simple debounce function for search input
+  function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+  }
+});
+  </script>
+</body>
+</html>
